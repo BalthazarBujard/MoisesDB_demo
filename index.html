@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Demo with Root Path</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .audio-section {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .audio-container {
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .grid-item {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .comments-section {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="examples-container"></div>
+
+<script>
+
+// Function to set the src for a list of audio elements based on common paths and naming conventions
+function setAudioSources(track, baseDir,example) {
+    const root = `${baseDir}/${track}`;
+    
+    // Set the src for the main audio elements
+    document.getElementById(`audio-original${example}`).querySelector('source').src = `${root}/original/moises_0.wav`;
+    document.getElementById(`audio-guide${example}`).querySelector('source').src = `${root}/source/moises_0.wav`;
+    document.getElementById(`audio-memory${example}`).querySelector('source').src = `${root}/memory/moises_${track}_0.wav`;
+    document.getElementById(`mem2-audio-original${example}`).querySelector('source').src = `${root}/original/moises_0.wav`;
+    document.getElementById(`mem2-audio-guide${example}`).querySelector('source').src = `${root}/Mem2/source/moises_0.wav`;
+    document.getElementById(`mem2-audio-memory${example}`).querySelector('source').src = `${root}/Mem2/memory/moises_${track}_0.wav`;
+
+    // Set the src for the output audio elements in a loop to avoid redundancy
+    const variations = [
+        { id: `audio-output${example}1`, a: 'A32', d: 'D0.25', k: 'K3' },
+        { id: `audio-output${example}2`, a: 'A32', d: 'D0.5', k: 'K3' },
+        { id: `audio-output${example}3`, a: 'A32', d: 'D1.0', k: 'K3' },
+        { id: `audio-output${example}4`, a: 'A128', d: 'D0.25', k: 'K12' },
+        { id: `audio-output${example}5`, a: 'A128', d: 'D0.5', k: 'K12' },
+        { id: `audio-output${example}6`, a: 'A128', d: 'D1.0', k: 'K12' },
+        { id: `audio-output${example}7`, a: 'A512', d: 'D0.25', k: 'K51' },
+        { id: `audio-output${example}8`, a: 'A512', d: 'D0.5', k: 'K51' },
+        { id: `audio-output${example}9`, a: 'A512', d: 'D1.0', k: 'K51' }
+    ];
+
+    variations.forEach(variation => {
+        const { id, a, d, k } = variation;
+        const element = document.getElementById(id);
+        if (element) {
+            element.querySelector('source').src = `${root}/mix/Cont_moises_Mem_moises_${track}_${a}_${d}_${k}_0.wav`;
+        }
+    });
+
+    const variations2 = [
+        { id: `mem2-audio-output${example}1`, a: 'A32', d: 'D0.25', k: 'K3' },
+        { id: `mem2-audio-output${example}2`, a: 'A32', d: 'D0.5', k: 'K3' },
+        { id: `mem2-audio-output${example}3`, a: 'A32', d: 'D1.0', k: 'K3' },
+        { id: `mem2-audio-output${example}4`, a: 'A128', d: 'D0.25', k: 'K12' },
+        { id: `mem2-audio-output${example}5`, a: 'A128', d: 'D0.5', k: 'K12' },
+        { id: `mem2-audio-output${example}6`, a: 'A128', d: 'D1.0', k: 'K12' },
+        { id: `mem2-audio-output${example}7`, a: 'A512', d: 'D0.25', k: 'K51' },
+        { id: `mem2-audio-output${example}8`, a: 'A512', d: 'D0.5', k: 'K51' },
+        { id: `mem2-audio-output${example}9`, a: 'A512', d: 'D1.0', k: 'K51' }
+    ];
+
+    variations2.forEach(variation => {
+        const { id, a, d, k } = variation;
+        const element = document.getElementById(id);
+        if (element) {
+            element.querySelector('source').src = `${root}/Mem2/mix/Cont_moises_Mem_moises_${track}_${a}_${d}_${k}_0.wav`;
+        }
+    });
+
+    // Load all audio elements
+    document.querySelectorAll('audio').forEach(audio => audio.load());
+}
+
+function createExampleHTML(N) {
+    // Get the container where the examples will be added
+    const container = document.getElementById('examples-container');
+
+    // Loop to create N examples
+    for (let i = 1; i <= N; i++) {
+        // Create the main example container
+        const exampleDiv = document.createElement('div');
+        exampleDiv.className = 'example';
+
+        // Create the first section of the example
+        exampleDiv.innerHTML = `
+            <h1>Exemple ${i} :</h1>
+            <div class="audio-section">
+                <div class="audio-container">
+                    <p>Original</p>
+                    <audio id="audio-original${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+                <div class="audio-container">
+                    <p>Guide</p>
+                    <audio id="audio-guide${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+                <div class="audio-container">
+                    <p>Memory</p>
+                    <audio id="audio-memory${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+            </div>
+            <div class="grid">
+                ${createGridItems(i, '')}
+            </div>
+            <h1>Exemple ${i} : - Memoire exogène</h1>
+            <div class="audio-section">
+                <div class="audio-container">
+                    <p>Original</p>
+                    <audio id="mem2-audio-original${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+                <div class="audio-container">
+                    <p>Guide</p>
+                    <audio id="mem2-audio-guide${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+                <div class="audio-container">
+                    <p>Memory</p>
+                    <audio id="mem2-audio-memory${i}" controls>
+                        <source type="audio/wav">
+                    </audio>
+                </div>
+            </div>
+            <div class="grid">
+                ${createGridItems(i, 'mem2-')}
+            </div>
+        `;
+
+        // Append the created example to the container
+        container.appendChild(exampleDiv);
+    }
+}
+
+// Helper function to create grid items for each example
+function createGridItems(exampleIndex, prefix) {
+    const gridItems = [
+        { label: 'A32 D0.25', idSuffix: '1' },
+        { label: 'A32 D0.5', idSuffix: '2' },
+        { label: 'A32 D1.0', idSuffix: '3' },
+        { label: 'A128 D0.25', idSuffix: '4' },
+        { label: 'A128 D0.5', idSuffix: '5' },
+        { label: 'A128 D1.0', idSuffix: '6' },
+        { label: 'A512 D0.25', idSuffix: '7' },
+        { label: 'A512 D0.5', idSuffix: '8' },
+        { label: 'A512 D1.0', idSuffix: '9' }
+    ];
+
+    return gridItems.map(item => `
+        <div class="grid-item">
+            <p>${item.label}</p>
+            <audio id="${prefix}audio-output${exampleIndex}${item.idSuffix}" controls>
+                <source type="audio/wav">
+            </audio>
+        </div>
+    `).join('');
+}
+createExampleHTML(13);
+setAudioSources("1e957e76-d7a2-4b84-bc4a-afa87979ff57", "../data/exemples_generation/moises",1);
+setAudioSources("3e7985e5-408f-4cf8-92b9-b9f62f738dd3", "../data/exemples_generation/moises",2);
+setAudioSources("6c70d5e0-5972-444a-86f8-a558dbb92d92", "../data/exemples_generation/moises",3);
+setAudioSources("7a9f3169-7bdf-483c-9634-8e5b097d50df", "../data/exemples_generation/moises",4);
+setAudioSources("93dda0e8-dd76-49e4-b08f-54a82387cdf6", "../data/exemples_generation/moises",5);
+setAudioSources("a1dcaeb2-f4e6-4818-b490-09f44d624afc", "../data/exemples_generation/moises",6);
+setAudioSources("a199697c-3cdc-47c7-a9c7-c1b07dd6c9dd", "../data/exemples_generation/moises",7);
+setAudioSources("1e957e76-d7a2-4b84-bc4a-afa87979ff57", "../data/exemples_generation/moises",8);
+setAudioSources("c2ba72ec-cf74-4155-a7c1-ddd921ac41d3", "../data/exemples_generation/moises",9);
+setAudioSources("174a115f-3688-45dc-8c39-9d05f21758e1", "../data/exemples_generation/moises",10);
+setAudioSources("524ab371-f6c6-4ff7-b896-e83750c8bef7", "../data/exemples_generation/moises",11);
+setAudioSources("747d5c98-665b-4470-a696-7a6cf6968ef1", "../data/exemples_generation/moises",12);
+setAudioSources("6b168ae6-9d8a-4dc2-9d27-898e6871bf8b", "../data/exemples_generation/moises",13);
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
